@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import IncomeSchema from "../models/incomeModel";
+import IncomeSchema from "../models/IncomeModel";
 
 export const addIncome = async (req: Request, res: Response) => {
     const { title, amount, date, category, description } = req.body;
@@ -21,7 +21,7 @@ export const addIncome = async (req: Request, res: Response) => {
         }
 
         await income.save();
-        res.status(201).json({ message: 'Income added successfully' });
+        res.status(201).json({ message: 'Income added successfully', income });
     } catch (error) {
         res.status(500).json({ message: 'Error adding income', error });
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
-import { useLayoutStore } from '../stores/layout';
+import { useLayoutStore } from '../stores/layoutStore';
 
 const layoutStore = useLayoutStore();
 </script>
@@ -12,8 +12,8 @@ const layoutStore = useLayoutStore();
             'w-72': layoutStore.isSidebarOpen,
             'w-16': layoutStore.isMobile && !layoutStore.isSidebarOpen,
         },
-        layoutStore.isMobile ? 'fixed left-0 z-30' : 'relative',
-        'overflow-hidden'
+        layoutStore.isMobile ? 'fixed left-0 z-30' : 'sticky top-0',
+        'overflow-y-auto'
     ]">
         <div>
             <div class="flex justify-between items-center gap-4 mb-32 mt-4">
@@ -53,12 +53,6 @@ const layoutStore = useLayoutStore();
                     <span>Expenses</span>
                 </RouterLink>
             </nav>
-        </div>
-        
-        <div v-show="layoutStore.isSidebarOpen" 
-             class="flex items-center gap-2 hover:text-primary-600 transition-colors whitespace-nowrap mt-auto">
-            <i class="pi pi-sign-out"></i>
-            <RouterLink to="/sign-out">Sign Out</RouterLink>
         </div>
     </aside>
 </template>

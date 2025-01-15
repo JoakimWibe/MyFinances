@@ -5,25 +5,27 @@ import { readdirSync } from 'fs';
 import db from './db/db';
 
 const port = process.env.PORT || 3000;
-
 const app = express();
 
-// Middleware
+// Middlewares
 app.use(express.json());
 app.use(cors());
 
-// Routes
-readdirSync('./routes').map((route) => app.use('/api', require(`./routes/${route}`)));
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
-const server = () => {
-    db()
-    app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-    });
+const server = async () => {
+    try {
+        await db();
+        const routes = readdirSync('./routes');
+        for (const route of routes) {
+            const { default: router } = await import(`./routes/${route}`);
+            app.use('/api', router);
+        }
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
 }
 
 server();

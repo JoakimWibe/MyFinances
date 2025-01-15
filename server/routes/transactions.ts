@@ -4,13 +4,13 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.post('/add-income', addIncome)
-    .get('/get-incomes', getIncomes)
-    .delete('/delete-income/:id', deleteIncome)
-    .get('/get-income/:id', getIncomeById)
-    .post('/add-expense', addExpense)
-    .get('/get-expenses', getExpenses)
-    .delete('/delete-expense/:id', deleteExpense)
-    .get('/get-expense/:id', getExpenseById);
+router.post('/incomes', addIncome)
+    .get('/incomes', getIncomes)
+    .delete('/incomes/:id', deleteIncome)
+    .get('/incomes/:id', getIncomeById)
+    .post('/expenses', addExpense)
+    .get('/expenses', getExpenses)
+    .delete('/expenses/:id', deleteExpense)
+    .get('/expenses/:id', getExpenseById);
 
 export default router;

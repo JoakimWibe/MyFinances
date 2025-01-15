@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
-import { useLayoutStore } from './stores/layout'
+import { useLayoutStore } from './stores/layoutStore'
 import { onMounted } from 'vue'
 import Backdrop from './components/Backdrop.vue'
 
