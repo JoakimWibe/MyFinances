@@ -3,6 +3,8 @@ import type { Expense, Income } from "@/types/transaction";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
+type NewTransaction = Omit<Income, '_id' | 'createdAt' | 'updatedAt'> & { type: 'income' } | Omit<Expense, '_id' | 'createdAt' | 'updatedAt'> & { type: 'expense' };
+
 export const useTransactionStore = defineStore('transactions', () => {
     const incomes = ref<Income[]>([])
     const expenses = ref<Expense[]>([])
@@ -28,58 +30,46 @@ export const useTransactionStore = defineStore('transactions', () => {
         }
     };
 
-    const addIncome = async (newIncome: Omit<Income, '_id' | 'createdAt' | 'updatedAt'>) => {
+    const addTransaction = async (newTransaction: NewTransaction) => {
         loading.value = true;
+        const endpoint = newTransaction.type === 'income' ? '/incomes' : '/expenses';
 
         try {
-            const { data } = await api.post<{ message: string, income: Income }>('/incomes', newIncome);
-            incomes.value.push(data.income);
-            return data.income;
+            const { data } = await api.post<{ message: string, income?: Income, expense?: Expense }>(endpoint, newTransaction);
+            const transaction = newTransaction.type === 'income' ? data.income : data.expense;
+            
+            if (!transaction) {
+                throw new Error(`No ${newTransaction.type} data received from server`);
+            }
+            
+            if (newTransaction.type === 'income') {
+                incomes.value.push(transaction as Income);
+            } else {
+                expenses.value.push(transaction as Expense);
+            }
+            
+            return transaction;
         } catch (err) {
-            error.value = err instanceof Error ? err.message : 'Failed to add income';
+            error.value = err instanceof Error ? err.message : `Failed to add ${newTransaction.type}`;
             throw error.value;
         } finally {
             loading.value = false;
         }
     };
 
-    const addExpense = async (newExpense: Omit<Expense, '_id' | 'createdAt' | 'updatedAt'>) => {
+    const deleteTransaction = async (id: string, type: 'income' | 'expense') => {
         loading.value = true;
+        const endpoint = type === 'income' ? '/incomes' : '/expenses';
 
         try {
-            const { data } = await api.post<{ message: string, expense: Expense }>('/expenses', newExpense);
-            expenses.value.push(data.expense);
-            return data.expense;
+            await api.delete(`${endpoint}/${id}`);
+            if (type === 'income') {
+                incomes.value = incomes.value.filter(income => income._id !== id);
+            } else {
+                expenses.value = expenses.value.filter(expense => expense._id !== id);
+            }
         } catch (err) {
-            error.value = err instanceof Error ? err.message : 'Failed to add expense';
-            throw error.value;
-        } finally {
-            loading.value = false;
-        }
-    };
-
-    const deleteIncome = async (id: string) => {
-        loading.value = true;
-
-        try {
-            await api.delete(`/incomes/${id}`);
-            incomes.value = incomes.value.filter(income => income._id !== id);
-        } catch (err) {
-            error.value = err instanceof Error ? err.message : 'Failed to delete income';
-            throw error.value;
-        } finally {
-            loading.value = false;
-        }
-    };
-
-    const deleteExpense = async (id: string) => {
-        loading.value = true;
-
-        try {
-            await api.delete(`/expenses/${id}`);
-            expenses.value = expenses.value.filter(expense => expense._id !== id);
-        } catch (err) {
-            error.value = err instanceof Error ? err.message : 'Failed to delete expense';
+            error.value = err instanceof Error ? err.message : `Failed to delete ${type}`;
             throw error.value;
         } finally {
             loading.value = false;
@@ -102,10 +92,8 @@ export const useTransactionStore = defineStore('transactions', () => {
         loading,
         error,
         fetchTransactions,
-        addIncome,
-        addExpense,
-        deleteIncome,
-        deleteExpense,
+        addTransaction,
+        deleteTransaction,
         totalIncome,
         totalExpenses,
         balance,

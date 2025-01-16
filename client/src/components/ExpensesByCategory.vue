@@ -6,7 +6,7 @@ import { Pie } from 'vue-chartjs'
 import { computed } from 'vue';
 
 const transactionsStore = useTransactionStore();
-const { expenses } = storeToRefs(transactionsStore);
+const { expenses, loading, error } = storeToRefs(transactionsStore);
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -23,7 +23,7 @@ const chartData = computed(() => {
     labels: Object.keys(categoryTotals),
     datasets: [
       {
-        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+        backgroundColor: ['#34D399', '#EF4444', '#3B82F6', '#DC2626', '#F472B6'],
         data: Object.values(categoryTotals)
       }
     ]
@@ -38,9 +38,21 @@ const chartOptions = {
 
 <template>
   <div class="bg-white p-4 shadow-md rounded h-[500px] flex flex-col">
-    <h2 class="text-xl font-bold text-gray-800 mb-8">Expenses by Category</h2>
     <div class="flex-1 flex justify-center items-center">
-      <div class="relative h-[300px] w-'[300px">
+      <div v-if="loading" class="flex items-center justify-center">
+        <i class="pi pi-spin pi-spinner text-4xl text-emerald-500"></i>
+      </div>
+
+      <div v-else-if="error" class="flex flex-col items-center justify-center gap-4 text-red-500">
+        <i class="pi pi-exclamation-circle text-4xl"></i>
+        <div class="text-lg font-medium">{{ error }}</div>
+      </div>
+
+      <div v-else-if="expenses.length === 0 && !loading && !error" class="text-center text-gray-500 text-lg">
+        No data to display
+      </div>
+
+      <div v-else class="relative h-[300px] w-[300px">
         <Pie :data="chartData" :options="chartOptions" />
       </div>
     </div>

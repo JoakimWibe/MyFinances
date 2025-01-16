@@ -13,4 +13,6 @@ export interface Transaction {
 export type Income = Transaction & { type: 'income' };
 export type Expense = Transaction & { type: 'expense' };
 
-export type NewTransaction = Omit<Transaction, '_id' | 'createdAt' | 'updatedAt'>;
+export type NewTransaction = 
+    | (Omit<Income, '_id' | 'createdAt' | 'updatedAt'> & { type: 'income' })
+    | (Omit<Expense, '_id' | 'createdAt' | 'updatedAt'> & { type: 'expense' });
