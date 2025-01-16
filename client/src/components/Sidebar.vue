@@ -29,7 +29,7 @@ const handleNavClick = () => {
                     <h2 class="font-medium text-white text-lg">My Finances</h2>
                 </div>
                 <button @click="layoutStore.toggleSidebar()" 
-                        class="hover:text-emerald-400 transition-colors flex items-center text-white"
+                        class="hover:text-emerald-400 transition-colors flex items-center text-white cursor-pointer"
                         :class="{ 'w-full flex justify-center': !layoutStore.isSidebarOpen }">
                     <i :class="[
                         'text-2xl',
@@ -41,7 +41,7 @@ const handleNavClick = () => {
             <nav v-show="layoutStore.isSidebarOpen" class="flex flex-col gap-4">
                 <RouterLink @click="handleNavClick" 
                           :to="{ name: 'home' }" 
-                          class="flex items-center gap-2 transition-colors whitespace-nowrap rounded-lg p-2"
+                          class="flex items-center gap-2 transition-colors whitespace-nowrap rounded-lg p-2 cursor-pointer"
                           :class="[$route.name === 'home' 
                             ? 'bg-emerald-500/10 text-emerald-400' 
                             : 'text-gray-300 hover:text-emerald-400']">
@@ -50,7 +50,7 @@ const handleNavClick = () => {
                 </RouterLink>
                 <RouterLink @click="handleNavClick" 
                           :to="{ name: 'transactions' }" 
-                          class="flex items-center gap-2 transition-colors whitespace-nowrap rounded-lg p-2"
+                          class="flex items-center gap-2 transition-colors whitespace-nowrap rounded-lg p-2 cursor-pointer"
                           :class="[$route.name === 'transactions' 
                             ? 'bg-emerald-500/10 text-emerald-400' 
                             : 'text-gray-300 hover:text-emerald-400']">

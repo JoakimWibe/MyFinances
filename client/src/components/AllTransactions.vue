@@ -76,7 +76,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
                         </div>
                         <div class="border-t border-gray-100 p-3 bg-gray-50">
                             <button @click="handleDeleteTransaction(income._id, 'income')"
-                                    class="w-full flex items-center justify-center text-red-600 hover:text-red-700 text-sm font-medium">
+                                    class="w-full cursor-pointer flex items-center justify-center text-red-600 hover:text-red-700 text-sm font-medium">
                                 <i class="pi pi-trash mr-2"></i>
                                 Delete
                             </button>
@@ -110,7 +110,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
                         </div>
                         <div class="border-t border-gray-100 p-3 bg-gray-50">
                             <button @click="handleDeleteTransaction(expense._id, 'expense')"
-                                    class="w-full flex items-center justify-center text-red-600 hover:text-red-700 text-sm font-medium">
+                                    class="w-full cursor-pointer flex items-center justify-center text-red-600 hover:text-red-700 text-sm font-medium">
                                 <i class="pi pi-trash mr-2"></i>
                                 Delete
                             </button>

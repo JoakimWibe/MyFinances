@@ -150,7 +150,7 @@ const handleSubmit = async () => {
                 </div>
 
                 <button
-                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 mt-4"
+                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center cursor-pointer justify-center gap-2 mt-4"
                     type="submit"
                     :disabled="isAdding"
                 >
