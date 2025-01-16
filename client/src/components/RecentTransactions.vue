@@ -56,7 +56,7 @@ const {
             </div>
         </div>
 
-        <div v-if="incomes.length === 0 && expenses.length === 0" 
+        <div v-if="incomes.length === 0 && expenses.length === 0 && !loading && !error" 
              class="flex flex-col items-center justify-center flex-1 gap-4 text-gray-500">
             <i class="pi pi-inbox text-4xl"></i>
             <div class="text-lg font-medium">No transactions yet</div>
