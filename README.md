@@ -16,6 +16,5 @@ Visit the application at [jmw-my-finances.netlify.app](https://jmw-my-finances.n
 ### Backend
 - Node.js + Express
 - MongoDB
-- Vercel
 
 Made by Joakim Myhre Wibe
