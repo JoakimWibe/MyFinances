@@ -6,8 +6,13 @@ import transactionRoutes from '../routes/transactions';
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+app.use(cors({
+    origin: ['https://jmw-my-finances.netlify.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
 app.use(express.json());
 
 db().catch(console.error);
