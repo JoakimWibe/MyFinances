@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 import { useLayoutStore } from '../stores/layoutStore';
 
 const layoutStore = useLayoutStore();
+const $route = useRoute();
 
 const handleNavClick = () => {
     if (layoutStore.isMobile) {
@@ -28,23 +29,31 @@ const handleNavClick = () => {
                     <h2 class="font-medium text-white text-lg">My Finances</h2>
                 </div>
                 <button @click="layoutStore.toggleSidebar()" 
-                        class="hover:text-emerald-400 transition-colors text-white"
+                        class="hover:text-emerald-400 transition-colors flex items-center text-white"
                         :class="{ 'w-full flex justify-center': !layoutStore.isSidebarOpen }">
                     <i :class="[
-                        'text-xl',
-                        layoutStore.isSidebarOpen ? 'pi pi-times' : 'pi pi-ellipsis-v'
+                        'text-2xl',
+                        layoutStore.isSidebarOpen ? 'pi pi-angle-left' : 'pi pi-ellipsis-v'
                     ]"></i>
                 </button>
             </div>
 
             <nav v-show="layoutStore.isSidebarOpen" class="flex flex-col gap-4">
-                <RouterLink @click="handleNavClick" active-class="text-emerald-400" to="/" 
-                          class="flex items-center gap-2 text-gray-300 hover:text-emerald-400 transition-colors whitespace-nowrap">
+                <RouterLink @click="handleNavClick" 
+                          :to="{ name: 'home' }" 
+                          class="flex items-center gap-2 transition-colors whitespace-nowrap rounded-lg p-2"
+                          :class="[$route.name === 'home' 
+                            ? 'bg-emerald-500/10 text-emerald-400' 
+                            : 'text-gray-300 hover:text-emerald-400']">
                     <i class="pi pi-chart-bar"></i>
                     <span>Dashboard</span>
                 </RouterLink>
-                <RouterLink @click="handleNavClick" active-class="text-emerald-400" to="/transactions" 
-                          class="flex items-center gap-2 text-gray-300 hover:text-emerald-400 transition-colors whitespace-nowrap">
+                <RouterLink @click="handleNavClick" 
+                          :to="{ name: 'transactions' }" 
+                          class="flex items-center gap-2 transition-colors whitespace-nowrap rounded-lg p-2"
+                          :class="[$route.name === 'transactions' 
+                            ? 'bg-emerald-500/10 text-emerald-400' 
+                            : 'text-gray-300 hover:text-emerald-400']">
                     <i class="pi pi-credit-card"></i>
                     <span>All Transactions</span>
                 </RouterLink>
