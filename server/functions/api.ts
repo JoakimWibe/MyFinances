@@ -2,8 +2,7 @@ import express from 'express';
 import serverless from 'serverless-http';
 import cors from 'cors';
 import db from '../db/db';
-import { readdirSync } from 'fs';
-import path from 'path';
+import transactionRoutes from '../routes/transactions';
 
 const app = express();
 
@@ -13,11 +12,7 @@ app.use(express.json());
 
 db().catch(console.error);
 
-const routePath = path.join(__dirname, '../routes');
-readdirSync(routePath).forEach(async (route) => {
-    const { default: router } = await import(`../routes/${route}`);
-    app.use('/api', router);
-});
+app.use('/api', transactionRoutes);
 
 const handler = serverless(app);
 export { handler };
