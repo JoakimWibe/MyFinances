@@ -8,11 +8,13 @@ type NewTransaction = Omit<Income, '_id' | 'createdAt' | 'updatedAt'> & { type: 
 export const useTransactionStore = defineStore('transactions', () => {
     const incomes = ref<Income[]>([])
     const expenses = ref<Expense[]>([])
-    const loading = ref(false);
+    const isLoading = ref(false);
+    const isAdding = ref(false);
+    const isDeleting = ref(false);
     const error = ref<string | null>(null);
 
     const fetchTransactions = async () => {
-        loading.value = true;
+        isLoading.value = true;
         
         try {
             const [incomesResponse, expensesResponse] = await Promise.all([
@@ -26,12 +28,12 @@ export const useTransactionStore = defineStore('transactions', () => {
             error.value = err instanceof Error ? err.message : 'Failed to fetch transactions';
             throw error.value;
         } finally {
-            loading.value = false;
+            isLoading.value = false;
         }
     };
 
     const addTransaction = async (newTransaction: NewTransaction) => {
-        loading.value = true;
+        isAdding.value = true;
         const endpoint = newTransaction.type === 'income' ? '/incomes' : '/expenses';
 
         try {
@@ -50,29 +52,30 @@ export const useTransactionStore = defineStore('transactions', () => {
             
             return transaction;
         } catch (err) {
-            error.value = err instanceof Error ? err.message : `Failed to add ${newTransaction.type}`;
+            error.value = err instanceof Error ? err.message : 'Failed to add transaction';
             throw error.value;
         } finally {
-            loading.value = false;
+            isAdding.value = false;
         }
     };
 
     const deleteTransaction = async (id: string, type: 'income' | 'expense') => {
-        loading.value = true;
-        const endpoint = type === 'income' ? '/incomes' : '/expenses';
+        isDeleting.value = true;
+        const endpoint = type === 'income' ? `/incomes/${id}` : `/expenses/${id}`;
 
         try {
-            await api.delete(`${endpoint}/${id}`);
+            await api.delete(endpoint);
+            
             if (type === 'income') {
                 incomes.value = incomes.value.filter(income => income._id !== id);
             } else {
                 expenses.value = expenses.value.filter(expense => expense._id !== id);
             }
         } catch (err) {
-            error.value = err instanceof Error ? err.message : `Failed to delete ${type}`;
+            error.value = err instanceof Error ? err.message : 'Failed to delete transaction';
             throw error.value;
         } finally {
-            loading.value = false;
+            isDeleting.value = false;
         }
     };
 
@@ -89,7 +92,9 @@ export const useTransactionStore = defineStore('transactions', () => {
     return {
         incomes,
         expenses,
-        loading,
+        isLoading,
+        isAdding,
+        isDeleting,
         error,
         fetchTransactions,
         addTransaction,

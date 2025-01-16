@@ -12,7 +12,7 @@ const transactionsStore = useTransactionStore();
 const { 
   incomes, 
   expenses,
-  loading, 
+  isLoading, 
   error
 } = storeToRefs(transactionsStore);
 
@@ -39,7 +39,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
 
 <template>
     <div class="flex flex-col h-full">
-        <div v-if="loading" class="flex items-center justify-center flex-1">
+        <div v-if="isLoading" class="flex items-center justify-center flex-1">
             <i class="pi pi-spin pi-spinner text-4xl text-emerald-500"></i>
         </div>
 

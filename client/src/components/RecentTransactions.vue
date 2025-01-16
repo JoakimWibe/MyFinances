@@ -6,14 +6,14 @@ const transactionsStore = useTransactionStore();
 const { 
   incomes, 
   expenses,
-  loading, 
+  isLoading, 
   error, 
 } = storeToRefs(transactionsStore);
 </script>
 
 <template>
     <div class="gap-8 flex flex-col bg-white h-[500px] overflow-y-auto p-4 shadow-md rounded">
-        <div v-if="loading" class="flex items-center justify-center h-full">
+        <div v-if="isLoading" class="flex items-center justify-center h-full">
             <i class="pi pi-spin pi-spinner text-4xl text-emerald-500"></i>
         </div>
 
@@ -56,7 +56,7 @@ const {
             </div>
         </div>
 
-        <div v-if="incomes.length === 0 && expenses.length === 0 && !loading && !error" 
+        <div v-if="incomes.length === 0 && expenses.length === 0 && !isLoading && !error" 
              class="flex flex-col items-center justify-center flex-1 gap-4 text-gray-500">
             <i class="pi pi-inbox text-4xl"></i>
             <div class="text-lg font-medium">No transactions yet</div>
