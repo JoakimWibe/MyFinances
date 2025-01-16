@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { readdirSync } from 'fs';
-import db from '../db/db';
+import db from './db/db';
 
 const port = process.env.PORT || 3000;
 const app = express();
