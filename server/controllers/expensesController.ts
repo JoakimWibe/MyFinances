@@ -30,7 +30,7 @@ export const addExpense = async (req: Request, res: Response) => {
 export const getExpenses = async (req: Request, res: Response) => {
     try {
         const expenses = await ExpenseSchema.find().sort({createdAt: -1});
-        res.status(200).json(expenses);
+        res.status(200).json(expenses || []);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching expenses', error });
     }
