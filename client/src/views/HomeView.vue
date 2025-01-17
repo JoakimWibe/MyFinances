@@ -20,9 +20,7 @@ onMounted(fetchTransactions)
             </div>
         </div>
 
-        <div class="bg-white rounded-xl p-6 shadow-md">
-            <Balance />
-        </div>
+        <Balance />
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="bg-white rounded-xl shadow-md overflow-hidden">

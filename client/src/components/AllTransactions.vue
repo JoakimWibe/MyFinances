@@ -12,7 +12,7 @@ const transactionsStore = useTransactionStore();
 const { 
   incomes, 
   expenses,
-  isLoading, 
+  loadingStates, 
   error
 } = storeToRefs(transactionsStore);
 
@@ -39,7 +39,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
 
 <template>
     <div class="flex flex-col h-full">
-        <div v-if="isLoading" class="flex items-center justify-center flex-1">
+        <div v-if="loadingStates.fetchingTransactions" class="flex items-center justify-center flex-1">
             <i class="pi pi-spin pi-spinner text-4xl text-emerald-500"></i>
         </div>
 
@@ -49,7 +49,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
         </div>
 
         <div v-else class="flex flex-col flex-1 overflow-auto p-4">
-            <h2 class="text-2xl font-bold text-gray-800 mb-8">All Transactions</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-8">January 2025</h2>
             
             <div v-if="incomes.length > 0" class="mb-8">
                 <div class="flex items-center justify-between mb-4">

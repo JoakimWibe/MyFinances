@@ -1,25 +1,96 @@
 import { api } from "@/lib/api";
-import type { Expense, Income } from "@/types/transaction";
+import type { Budget, Expense, Income, NewBudget, NewTransaction } from "@/types/transaction";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-
-type NewTransaction = Omit<Income, '_id' | 'createdAt' | 'updatedAt'> & { type: 'income' } | Omit<Expense, '_id' | 'createdAt' | 'updatedAt'> & { type: 'expense' };
 
 export const useTransactionStore = defineStore('transactions', () => {
     const incomes = ref<Income[]>([])
     const expenses = ref<Expense[]>([])
-    const isLoading = ref(false);
-    const isAdding = ref(false);
-    const isDeleting = ref(false);
+    const budgets = ref<Budget[]>([])
+    const selectedBudgetId = ref<string | null>(null);
     const error = ref<string | null>(null);
 
-    const fetchTransactions = async () => {
-        isLoading.value = true;
+    const loadingStates = ref({
+        fetchingTransactions: false,
+        fetchingBudgets: false,
+        addingTransaction: false,
+        deletingTransaction: false,
+        addingBudget: false,
+        deletingBudget: false
+    });
+
+    const selectedBudget = computed(() => 
+        selectedBudgetId.value ? budgets.value.find(budget => budget._id === selectedBudgetId.value) : null
+    );
+
+    const fetchBudgets = async () => {
+        loadingStates.value.fetchingBudgets = true;
+        try {
+            const response = await api.get<Budget[]>('/budgets');
+            budgets.value = response.data;
+            
+            if (!selectedBudgetId.value && response.data.length > 0) {
+                selectBudget(response.data[0]._id);
+            }
+        } catch (err) {
+            error.value = err instanceof Error ? err.message : 'Failed to fetch budgets';
+            throw error.value;
+        } finally {
+            loadingStates.value.fetchingBudgets = false;
+        }
+    };
+
+    const selectBudget = async (budgetId: string) => {
+        selectedBudgetId.value = budgetId;
+        await fetchTransactions(budgetId);
+    };
+
+    const addBudget = async (newBudget: NewBudget) => {
+        loadingStates.value.addingBudget = true;
+        try {
+            const response = await api.post<Budget>('/budgets', newBudget);
+            budgets.value = [response.data, ...budgets.value];
+            
+            if (budgets.value.length === 1) {
+                selectBudget(response.data._id);
+            }
+            return response.data;
+        } catch (err) {
+            error.value = err instanceof Error ? err.message : 'Failed to add budget';
+            throw error.value;
+        } finally {
+            loadingStates.value.addingBudget = false;
+        }
+    };
+
+    const deleteBudget = async (id: string) => {
+        loadingStates.value.deletingBudget = true;
+        try {
+            await api.delete(`/budgets/${id}`);
+            budgets.value = budgets.value.filter(budget => budget._id !== id);
+            
+            if (selectedBudgetId.value === id) {
+                if (budgets.value.length > 0) {
+                    selectBudget(budgets.value[0]._id);
+                } else {
+                    selectedBudgetId.value = null;
+                }
+            }
+        } catch (err) {
+            error.value = err instanceof Error ? err.message : 'Failed to delete budget';
+            throw error.value;
+        } finally {
+            loadingStates.value.deletingBudget = false;
+        }
+    };
+
+    const fetchTransactions = async (budgetId?: string) => {
+        loadingStates.value.fetchingTransactions = true;
         
         try {
             const [incomesResponse, expensesResponse] = await Promise.all([
-                api.get<Income[]>('/incomes'),
-                api.get<Expense[]>('/expenses')
+                api.get<Income[]>(`/incomes${budgetId ? `?budgetId=${budgetId}` : ''}`),
+                api.get<Expense[]>(`/expenses${budgetId ? `?budgetId=${budgetId}` : ''}`)
             ]);
 
             incomes.value = incomesResponse.data;
@@ -28,39 +99,39 @@ export const useTransactionStore = defineStore('transactions', () => {
             error.value = err instanceof Error ? err.message : 'Failed to fetch transactions';
             throw error.value;
         } finally {
-            isLoading.value = false;
+            loadingStates.value.fetchingTransactions = false;
         }
     };
 
-    const addTransaction = async (newTransaction: NewTransaction) => {
-        isAdding.value = true;
-        const endpoint = newTransaction.type === 'income' ? '/incomes' : '/expenses';
+    const addTransaction = async (transaction: NewTransaction) => {
+        loadingStates.value.addingTransaction = true;
+        const endpoint = transaction.type === 'income' ? '/incomes' : '/expenses';
 
         try {
-            const { data } = await api.post<{ message: string, income?: Income, expense?: Expense }>(endpoint, newTransaction);
-            const transaction = newTransaction.type === 'income' ? data.income : data.expense;
+            const { data } = await api.post<{ message: string, income?: Income, expense?: Expense }>(endpoint, transaction);
+            const newTransaction = transaction.type === 'income' ? data.income : data.expense;
             
-            if (!transaction) {
-                throw new Error(`No ${newTransaction.type} data received from server`);
+            if (!newTransaction) {
+                throw new Error(`No ${transaction.type} data received from server`);
             }
             
-            if (newTransaction.type === 'income') {
-                incomes.value.push(transaction as Income);
+            if (transaction.type === 'income') {
+                incomes.value.push(newTransaction as Income);
             } else {
-                expenses.value.push(transaction as Expense);
+                expenses.value.push(newTransaction as Expense);
             }
             
-            return transaction;
+            return newTransaction;
         } catch (err) {
             error.value = err instanceof Error ? err.message : 'Failed to add transaction';
             throw error.value;
         } finally {
-            isAdding.value = false;
+            loadingStates.value.addingTransaction = false;
         }
     };
 
     const deleteTransaction = async (id: string, type: 'income' | 'expense') => {
-        isDeleting.value = true;
+        loadingStates.value.deletingTransaction = true;
         const endpoint = type === 'income' ? `/incomes/${id}` : `/expenses/${id}`;
 
         try {
@@ -75,7 +146,7 @@ export const useTransactionStore = defineStore('transactions', () => {
             error.value = err instanceof Error ? err.message : 'Failed to delete transaction';
             throw error.value;
         } finally {
-            isDeleting.value = false;
+            loadingStates.value.deletingTransaction = false;
         }
     };
 
@@ -92,15 +163,20 @@ export const useTransactionStore = defineStore('transactions', () => {
     return {
         incomes,
         expenses,
-        isLoading,
-        isAdding,
-        isDeleting,
+        budgets,
+        selectedBudgetId,
+        selectedBudget,
+        loadingStates,
         error,
         fetchTransactions,
+        fetchBudgets,
+        selectBudget,
+        addBudget,
+        deleteBudget,
         addTransaction,
         deleteTransaction,
         totalIncome,
         totalExpenses,
-        balance,
-    };
+        balance
+    }
 });

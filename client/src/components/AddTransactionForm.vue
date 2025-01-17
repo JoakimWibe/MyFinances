@@ -8,7 +8,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { storeToRefs } from 'pinia';
 
 const transactionsStore = useTransactionStore();
-const { isAdding } = storeToRefs(transactionsStore);
+const { loadingStates } = storeToRefs(transactionsStore);
 const { addTransaction } = transactionsStore;
 
 const date = ref();
@@ -46,7 +46,7 @@ const handleSubmit = async () => {
 
 <template>
     <div>
-        <form @submit.prevent="handleSubmit" :disabled="isAdding">
+        <form @submit.prevent="handleSubmit" :disabled="loadingStates.addingTransaction">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Add Transaction</h2>
 
             <div class="space-y-4">
@@ -152,10 +152,10 @@ const handleSubmit = async () => {
                 <button
                     class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center cursor-pointer justify-center gap-2 mt-4"
                     type="submit"
-                    :disabled="isAdding"
+                    :disabled="loadingStates.addingTransaction"
                 >
-                    <i v-if="isAdding" class="pi pi-spin pi-spinner"></i>
-                    <span>{{ isAdding ? 'Adding Transaction...' : 'Add Transaction' }}</span>
+                    <i v-if="loadingStates.addingTransaction" class="pi pi-spin pi-spinner"></i>
+                    <span>{{ loadingStates.addingTransaction ? 'Adding Transaction...' : 'Add Transaction' }}</span>
                 </button>
             </div>
         </form>

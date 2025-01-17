@@ -11,7 +11,9 @@ const {
 </script>
 
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl p-6 shadow-md">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">January 2025</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-gray-50 rounded-lg p-4">
             <div class="flex items-center gap-3 mb-3">
                 <div class="p-2 bg-gray-100 text-gray-600 rounded-lg">
@@ -53,5 +55,6 @@ const {
                 Expenses
             </p>
         </div>
+    </div>
     </div>
 </template>

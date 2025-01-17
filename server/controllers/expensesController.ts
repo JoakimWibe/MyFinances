@@ -38,7 +38,8 @@ export const addExpense = async (req: Request, res: Response) => {
 
 export const getExpenses = async (req: Request, res: Response) => {
     try {
-        const expenses = await ExpenseSchema.find().sort({createdAt: -1});
+        const query = req.query.budgetId ? { budgetId: req.query.budgetId } : {};
+        const expenses = await ExpenseSchema.find(query).sort({createdAt: -1});
         res.status(200).json(expenses || []);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching expenses', error });

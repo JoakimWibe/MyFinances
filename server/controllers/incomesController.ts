@@ -38,7 +38,8 @@ export const addIncome = async (req: Request, res: Response) => {
 
 export const getIncomes = async (req: Request, res: Response) => {
     try {
-        const incomes = await IncomeSchema.find().sort({createdAt: -1});
+        const query = req.query.budgetId ? { budgetId: req.query.budgetId } : {};
+        const incomes = await IncomeSchema.find(query).sort({createdAt: -1});
         res.status(200).json(incomes || []);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching incomes', error });

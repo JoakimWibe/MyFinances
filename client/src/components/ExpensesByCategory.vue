@@ -6,7 +6,7 @@ import { Pie } from 'vue-chartjs'
 import { computed } from 'vue';
 
 const transactionsStore = useTransactionStore();
-const { expenses, isLoading, error } = storeToRefs(transactionsStore);
+const { expenses, loadingStates, error } = storeToRefs(transactionsStore);
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -39,7 +39,7 @@ const chartOptions = {
 <template>
   <div class="bg-white p-4 shadow-md rounded h-[500px] flex flex-col">
     <div class="flex-1 flex justify-center items-center">
-      <div v-if="isLoading" class="flex items-center justify-center">
+      <div v-if="loadingStates.fetchingTransactions" class="flex items-center justify-center">
         <i class="pi pi-spin pi-spinner text-4xl text-emerald-500"></i>
       </div>
 
@@ -48,7 +48,7 @@ const chartOptions = {
         <div class="text-lg font-medium">{{ error }}</div>
       </div>
 
-      <div v-else-if="expenses.length === 0 && !isLoading && !error" class="text-center text-gray-500 text-lg">
+      <div v-else-if="expenses.length === 0 && !loadingStates.fetchingTransactions && !error" class="text-center text-gray-500 text-lg">
         No data to display
       </div>
 
