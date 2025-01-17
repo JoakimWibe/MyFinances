@@ -2,15 +2,17 @@ import { Request, Response } from 'express';
 import BudgetSchema from "../models/BudgetModel";
 
 export const addBudget = async (req: Request, res: Response) => {
-    const { title, description } = req.body;
+    const { title, description, startDate, endDate } = req.body;
 
     const budget = new BudgetSchema({
         title,
-        description
+        description,
+        startDate,
+        endDate
     });
 
     try {
-        if (!title || !description) {
+        if (!title || !description || !startDate || !endDate) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 

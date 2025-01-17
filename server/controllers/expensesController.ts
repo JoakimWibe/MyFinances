@@ -1,15 +1,24 @@
 import { Request, Response } from 'express';
 import ExpenseSchema from "../models/ExpenceModel";
+import BudgetSchema from "../models/BudgetModel";
 
 export const addExpense = async (req: Request, res: Response) => {
-    const { title, amount, date, category, description } = req.body;
+    const { title, amount, date, category, description, budgetId } = req.body;
+
+    if (budgetId) {
+        const budget = await BudgetSchema.findById(budgetId);
+        if (!budget) {
+            return res.status(404).json({ message: "Budget not found" });
+        }
+    }
 
     const expense = new ExpenseSchema({
         title,
         amount,
         date,
         category,
-        description
+        description,
+        budgetId
     });
 
     try {

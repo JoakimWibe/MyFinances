@@ -28,6 +28,11 @@ const IncomeSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true
+    },
+    budgetId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Budget',
+        required: false
     }
 }, {timestamps: true});
 
