@@ -8,7 +8,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { storeToRefs } from 'pinia';
 
 const transactionsStore = useTransactionStore();
-const { loadingStates, budgets } = storeToRefs(transactionsStore);
+const { loadingStates, budgets, selectedBudget } = storeToRefs(transactionsStore);
 const { addTransaction } = transactionsStore;
 
 const form = ref({
@@ -18,7 +18,6 @@ const form = ref({
     category: '',
     description: '',
     date: '',
-    budgetId: ''
 });
 
 const toast = useToast();
@@ -31,7 +30,7 @@ const handleSubmit = async () => {
         category: form.value.category.toLowerCase(),
         date: form.value.date,
         description: form.value.description,
-        budgetId: form.value.budgetId
+        budgetId: selectedBudget.value._id
     };
 
     try {
@@ -134,16 +133,6 @@ const handleSubmit = async () => {
                         input-class-name="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200"
                     />
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                        Budget
-                    </label>
-                    <select required v-model="form.budgetId" class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200" name="budgetId">
-                        <option v-for="budget in budgets" :value="budget._id">{{budget.title}}</option>
-                    </select>
-                </div>
-
 
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-600 mb-1">
