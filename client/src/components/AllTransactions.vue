@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTransactionStore } from '@/stores/transactionStore';
 import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import { formatDate } from '@/utils/formatDate';
 
@@ -13,14 +12,11 @@ const {
   incomes, 
   expenses,
   loadingStates, 
-  error
+  error,
+  selectedBudget
 } = storeToRefs(transactionsStore);
 
 const { deleteTransaction } = transactionsStore;
-
-onMounted(async () => {
-  await transactionsStore.fetchTransactions()
-})
 
 const handleDeleteTransaction = async (transactionId: string, type: 'income' | 'expense') => {
     if (!confirm('Are you sure you want to delete this transaction?')) return;
@@ -49,7 +45,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
         </div>
 
         <div v-else class="flex flex-col flex-1 overflow-auto p-4">
-            <h2 class="text-xl font-bold text-gray-800 mb-8">January 2025</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-8">{{ selectedBudget?.title }}</h2>
             
             <div v-if="incomes.length > 0" class="mb-8">
                 <div class="flex items-center justify-between mb-4">

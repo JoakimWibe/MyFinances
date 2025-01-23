@@ -1,18 +1,37 @@
 <script setup lang="ts">
 import { useTransactionStore } from '@/stores/transactionStore';
 import { storeToRefs } from 'pinia';
+import { onMounted, ref, watch } from 'vue';
 const transactionsStore = useTransactionStore();
+
+const { selectBudget, fetchBudgets } = transactionsStore;
 
 const { 
   balance,
   totalIncome,
   totalExpenses,
+  budgets,
+  selectedBudget
 } = storeToRefs(transactionsStore);
+
+const selectedOption = ref("")
+
+onMounted(async () => {
+   await fetchBudgets()
+   selectedOption.value = selectedBudget.value?._id || '';
+});
+
+watch(selectedOption, (newSelectedOption) => {
+   selectBudget(newSelectedOption);
+})
 </script>
 
 <template>
     <div class="bg-white rounded-xl p-6 shadow-md">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">January 2025</h2>
+        <select v-model="selectedOption" name="budgets" class="cursor-pointer text-sm font-medium text-gray-600 mb-6">
+            <option v-for="budget in budgets" :value="budget._id">{{budget.title}}</option>
+        </select>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-gray-50 rounded-lg p-4">
             <div class="flex items-center gap-3 mb-3">

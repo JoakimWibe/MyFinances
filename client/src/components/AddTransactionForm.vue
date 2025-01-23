@@ -8,10 +8,8 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { storeToRefs } from 'pinia';
 
 const transactionsStore = useTransactionStore();
-const { loadingStates } = storeToRefs(transactionsStore);
+const { loadingStates, budgets } = storeToRefs(transactionsStore);
 const { addTransaction } = transactionsStore;
-
-const date = ref();
 
 const form = ref({
     title: '',
@@ -19,7 +17,8 @@ const form = ref({
     type: 'income' as 'income' | 'expense',
     category: '',
     description: '',
-    date: ''
+    date: '',
+    budgetId: ''
 });
 
 const toast = useToast();
@@ -31,7 +30,8 @@ const handleSubmit = async () => {
         type: form.value.type,
         category: form.value.category.toLowerCase(),
         date: form.value.date,
-        description: form.value.description
+        description: form.value.description,
+        budgetId: form.value.budgetId
     };
 
     try {
@@ -50,7 +50,7 @@ const handleSubmit = async () => {
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Add Transaction</h2>
 
             <div class="space-y-4">
-                <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex flex-col gap-4">
                     <div class="flex-1">
                         <label for="type" class="block text-sm font-medium text-gray-600 mb-1">
                             Transaction Type
@@ -134,6 +134,16 @@ const handleSubmit = async () => {
                         input-class-name="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200"
                     />
                 </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                        Budget
+                    </label>
+                    <select required v-model="form.budgetId" class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200" name="budgetId">
+                        <option v-for="budget in budgets" :value="budget._id">{{budget.title}}</option>
+                    </select>
+                </div>
+
 
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-600 mb-1">
