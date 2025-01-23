@@ -23,6 +23,7 @@ const form = ref({
 const toast = useToast();
 
 const handleSubmit = async () => {
+
     const newTransaction: NewTransaction = {
         title: form.value.title,
         amount: form.value.amount,
@@ -30,7 +31,7 @@ const handleSubmit = async () => {
         category: form.value.category.toLowerCase(),
         date: form.value.date,
         description: form.value.description,
-        budgetId: selectedBudget.value._id
+        budgetId: selectedBudget.value?._id
     };
 
     try {

@@ -23,7 +23,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
     
     try {
         await deleteTransaction(transactionId, type);
-        await transactionsStore.fetchTransactions(selectedBudget.value._id);
+        await transactionsStore.fetchTransactions(selectedBudget.value?._id);
         toast.success('Transaction deleted successfully');
     } catch (error) {
         console.error('Error deleting transaction:', error);
