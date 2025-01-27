@@ -3,6 +3,7 @@ import { useTransactionStore } from '@/stores/transactionStore';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toast-notification';
 import { formatDate } from '@/utils/formatDate';
+import { onMounted, ref, watch } from 'vue';
 
 const toast = useToast();
 
@@ -13,10 +14,22 @@ const {
   expenses,
   loadingStates, 
   error,
-  selectedBudget
+  selectedBudget,
+  budgets
 } = storeToRefs(transactionsStore);
 
-const { deleteTransaction } = transactionsStore;
+const { deleteTransaction, fetchBudgets, selectBudget } = transactionsStore;
+
+const selectedOption = ref("")
+
+onMounted(async () => {
+   await fetchBudgets()
+   selectedOption.value = selectedBudget.value?._id || '';
+});
+
+watch(selectedOption, (newSelectedOption) => {
+   selectBudget(newSelectedOption);
+})
 
 const handleDeleteTransaction = async (transactionId: string, type: 'income' | 'expense') => {
     if (!confirm('Are you sure you want to delete this transaction?')) return;
@@ -44,13 +57,15 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
             <div class="text-lg font-medium">{{ error }}</div>
         </div>
 
-        <div v-else class="flex flex-col flex-1 overflow-auto p-4">
-            <h2 class="text-xl font-bold text-gray-800 mb-8">{{ selectedBudget?.title }}</h2>
+        <div v-else class="flex flex-col flex-1 overflow-auto bg-white rounded-xl p-6 shadow-md">
+            <select v-model="selectedOption" name="budgets" class="cursor-pointer text-sm font-medium text-gray-600 mb-6">
+                <option v-for="budget in budgets" :value="budget._id">{{budget.title}}</option>
+            </select>
             
             <div v-if="incomes.length > 0" class="mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-600">Income Transactions</h3>
-                    <span class="text-sm text-gray-500">{{ incomes.length }} transactions</span>
+                    <span class="text-sm text-gray-500">Transactions: {{ incomes.length }}</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div v-for="income in incomes" :key="income._id" 
@@ -84,7 +99,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
             <div v-if="expenses.length > 0" class="mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-600">Expense Transactions</h3>
-                    <span class="text-sm text-gray-500">{{ expenses.length }} transactions</span>
+                    <span class="text-sm text-gray-500">Transactions: {{ expenses.length }}</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div v-for="expense in expenses" :key="expense._id" 

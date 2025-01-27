@@ -57,6 +57,15 @@ const handleNavClick = () => {
                     <i class="pi pi-credit-card"></i>
                     <span>All Transactions</span>
                 </RouterLink>
+                <RouterLink @click="handleNavClick" 
+                          :to="{ name: 'budgets' }" 
+                          class="flex items-center gap-2 transition-colors whitespace-nowrap rounded-lg p-2 cursor-pointer"
+                          :class="[$route.name === 'budgets' 
+                            ? 'bg-emerald-500/10 text-emerald-400' 
+                            : 'text-gray-300 hover:text-emerald-400']">
+                    <i class="pi pi-money-bill"></i>
+                    <span>Budgets</span>
+                </RouterLink>
             </nav>
         </div>
     </aside>
