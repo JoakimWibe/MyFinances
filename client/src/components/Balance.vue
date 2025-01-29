@@ -2,6 +2,8 @@
 import { useTransactionStore } from '@/stores/transactionStore';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref, watch } from 'vue';
+import { formatDate } from '@/utils/formatDate';
+
 const transactionsStore = useTransactionStore();
 
 const { selectBudget, fetchBudgets } = transactionsStore;
@@ -28,9 +30,13 @@ watch(selectedOption, (newSelectedOption) => {
 
 <template>
     <div class="bg-white rounded-xl p-6 shadow-md">
-        <select v-model="selectedOption" name="budgets" class="cursor-pointer text-sm font-medium text-gray-600 mb-6">
-            <option v-for="budget in budgets" :value="budget._id">{{budget.title}}</option>
-        </select>
+        <div class="flex justify-between">
+            <select v-model="selectedOption" name="budgets" class="cursor-pointer text-sm font-medium text-gray-600 mb-6">
+                <option v-for="budget in budgets" :value="budget._id">{{budget.title}}</option>
+            </select>
+
+            <p class="text-sm font-medium text-gray-600">{{ formatDate(selectedBudget!.startDate) }} - {{ formatDate(selectedBudget!.endDate)  }}</p>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-gray-50 rounded-lg p-4">

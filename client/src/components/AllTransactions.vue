@@ -57,10 +57,14 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
             <div class="text-lg font-medium">{{ error }}</div>
         </div>
 
-        <div v-else class="flex flex-col flex-1 overflow-auto bg-white rounded-xl p-6 shadow-md">
+        <div v-else class="flex flex-col flex-1 overflow-auto  rounded-xl p-6 shadow-md">
+        <div class="flex justify-between">
             <select v-model="selectedOption" name="budgets" class="cursor-pointer text-sm font-medium text-gray-600 mb-6">
                 <option v-for="budget in budgets" :value="budget._id">{{budget.title}}</option>
             </select>
+
+            <p class="text-sm font-medium text-gray-600">{{ formatDate(selectedBudget!.startDate) }} - {{ formatDate(selectedBudget!.endDate)  }}</p>
+        </div>
             
             <div v-if="incomes.length > 0" class="mb-8">
                 <div class="flex items-center justify-between mb-4">
