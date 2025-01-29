@@ -23,6 +23,24 @@ export const addBudget = async (req: Request, res: Response) => {
     }
 };
 
+export const editBudget = async (req: Request, res: Response) => {
+    const { title, description, startDate, endDate } = req.body;
+
+    try {
+        const result = await BudgetSchema.updateOne(
+            { _id: req.params.id },
+            { $set: { title, description, startDate, endDate } }
+        );
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ message: 'Budget not found' });
+        }
+
+        res.status(200).json({ message: 'Budget edited successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error editing budget', error });
+    }
+};
+
 export const getBudgets = async (req: Request, res: Response) => {
     try {
         const budgets = await BudgetSchema.find().sort({createdAt: -1});
@@ -37,7 +55,7 @@ export const getBudget = async (req: Request, res: Response) => {
     try {
         const budget = await BudgetSchema.findById(id);
         if (!budget) {
-            return res.status(404).json({ message: 'Budgwet not found' });
+            return res.status(404).json({ message: 'Budget not found' });
         }
         res.status(200).json(budget);
     } catch (error) {

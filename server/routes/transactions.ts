@@ -1,4 +1,4 @@
-import { addBudget, deleteBudget, getBudget, getBudgets } from '../controllers/budgetController';
+import { addBudget, deleteBudget, editBudget, getBudget, getBudgets } from '../controllers/budgetController';
 import { addExpense, getExpenses, deleteExpense, getExpenseById } from '../controllers/expensesController';
 import { addIncome, deleteIncome, getIncomeById, getIncomes } from '../controllers/incomesController';
 import { Router } from 'express';
@@ -14,6 +14,7 @@ router.post('/incomes', addIncome)
     .delete('/expenses/:id', deleteExpense)
     .get('/expenses/:id', getExpenseById)
     .post('/budgets', addBudget)
+    .put('/budgets/:id', editBudget)
     .get('/budgets', getBudgets)
     .delete('/budgets/:id', deleteBudget)
     .get('/budgets/:id', getBudget);

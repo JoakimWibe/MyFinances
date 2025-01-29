@@ -18,7 +18,7 @@ const {
   budgets
 } = storeToRefs(transactionsStore);
 
-const { deleteTransaction, fetchBudgets, selectBudget } = transactionsStore;
+const { deleteTransaction, fetchBudgets, selectBudget, fetchTransactions } = transactionsStore;
 
 const selectedOption = ref("")
 
@@ -36,7 +36,7 @@ const handleDeleteTransaction = async (transactionId: string, type: 'income' | '
     
     try {
         await deleteTransaction(transactionId, type);
-        await transactionsStore.fetchTransactions(selectedBudget.value?._id);
+        await fetchTransactions(selectedBudget.value?._id);
         toast.success('Transaction deleted successfully');
     } catch (error) {
         console.error('Error deleting transaction:', error);

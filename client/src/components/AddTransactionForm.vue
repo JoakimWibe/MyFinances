@@ -8,7 +8,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { storeToRefs } from 'pinia';
 
 const transactionsStore = useTransactionStore();
-const { loadingStates, budgets, selectedBudget } = storeToRefs(transactionsStore);
+const { loadingStates, selectedBudget } = storeToRefs(transactionsStore);
 const { addTransaction } = transactionsStore;
 
 const form = ref({

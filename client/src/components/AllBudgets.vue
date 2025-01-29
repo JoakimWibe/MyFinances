@@ -3,6 +3,7 @@ import { useTransactionStore } from '@/stores/transactionStore';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toast-notification';
 import { formatDate } from '@/utils/formatDate';
+import { RouterLink } from 'vue-router';
 
 const toast = useToast();
 
@@ -20,7 +21,7 @@ const handleDeleteBudget = async (budgetId: string) => {
     
     try {
         await deleteBudget(budgetId);
-        await transactionsStore.fetchBudgets();
+        await fetchBudgets();
         toast.success('Budget deleted successfully');
     } catch (error) {
         console.error('Error deleting budget:', error);
@@ -56,11 +57,12 @@ const handleDeleteBudget = async (budgetId: string) => {
                             </div>
                             <div class="flex items-center text-sm text-gray-500">
                                 <i class="pi pi-calendar mr-2"></i>
-                                <span>{{ formatDate(budget.createdAt) }}</span>
+                                <span>{{ formatDate(budget.startDate) }} - {{ formatDate(budget.endDate) }}</span>
                             </div>
                             <p v-if="budget.description" class="text-sm text-gray-600">{{ budget.description }}</p>
                         </div>
-                        <div class="border-t border-gray-100 p-3 bg-gray-50">
+                        <div class="border-t flex border-gray-100 p-3 bg-gray-50">
+                            <RouterLink class="w-full cursor-pointer flex items-center justify-center text-emerald-500 hover:text-emerald-700 text-sm font-medium" :to="`/budgets/${budget._id}`">Manage</RouterLink>
                             <button @click="handleDeleteBudget(budget._id)"
                                     class="w-full cursor-pointer flex items-center justify-center text-red-600 hover:text-red-700 text-sm font-medium">
                                 <i class="pi pi-trash mr-2"></i>

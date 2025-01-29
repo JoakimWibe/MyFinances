@@ -7,12 +7,15 @@ export const useTransactionStore = defineStore('transactions', () => {
     const incomes = ref<Income[]>([])
     const expenses = ref<Expense[]>([])
     const budgets = ref<Budget[]>([])
+    const budget = ref<Budget>()
     const selectedBudgetId = ref<string | null>(null);
     const error = ref<string | null>(null);
 
     const loadingStates = ref({
         fetchingTransactions: false,
         fetchingBudgets: false,
+        fetchingBudget: false,
+        editingBudget: false,
         addingTransaction: false,
         deletingTransaction: false,
         addingBudget: false,
@@ -22,6 +25,19 @@ export const useTransactionStore = defineStore('transactions', () => {
     const selectedBudget = computed(() => 
         selectedBudgetId.value ? budgets.value.find(budget => budget._id === selectedBudgetId.value) : null
     );
+
+    const fetchBudgetById = async (budgetId: string) => {
+        loadingStates.value.fetchingBudget = true;
+        try {
+            const response = await api.get<Budget>(`/budgets/${budgetId}`);
+            budget.value = response.data;
+        } catch (err) {
+            error.value = err instanceof Error ? err.message : 'Failed to fetch budget';
+            throw error.value;
+        } finally {
+            loadingStates.value.fetchingBudget = false;
+        }
+    }
 
     const fetchBudgets = async () => {
         loadingStates.value.fetchingBudgets = true;
@@ -60,6 +76,19 @@ export const useTransactionStore = defineStore('transactions', () => {
             throw error.value;
         } finally {
             loadingStates.value.addingBudget = false;
+        }
+    };
+
+    const editBudget = async (id: string, editedBudget: NewBudget) => {
+        loadingStates.value.editingBudget = true;
+        try {
+            const response = await api.put<Budget>(`/budgets/${id}`, editedBudget);
+            return response.data;
+        } catch (err) {
+            error.value = err instanceof Error ? err.message : 'Failed to edit budget';
+            throw error.value;
+        } finally {
+            loadingStates.value.editingBudget = false;
         }
     };
 
@@ -164,15 +193,18 @@ export const useTransactionStore = defineStore('transactions', () => {
         incomes,
         expenses,
         budgets,
+        budget,
         selectedBudgetId,
         selectedBudget,
         loadingStates,
         error,
         fetchTransactions,
         fetchBudgets,
+        fetchBudgetById,
         selectBudget,
         addBudget,
         deleteBudget,
+        editBudget,
         addTransaction,
         deleteTransaction,
         totalIncome,
